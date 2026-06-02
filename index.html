@@ -13,7 +13,6 @@
     </script>
 
     <style>
-        /* The Master Background - Dark radial gradient mimicking a Sith aura */
         body {
             background: radial-gradient(circle at center, #2a0000 0%, #000000 80%);
             color: #ffcc00; 
@@ -25,18 +24,16 @@
             justify-content: center;
         }
 
-        /* The Flexbox Wrapper - Splits the screen into two columns */
         .main-wrapper {
             display: flex;
             gap: 40px;
             width: 100%;
-            max-width: 1200px; /* Keeps everything nicely contained */
+            max-width: 1200px; 
             align-items: flex-start;
         }
 
-        /* Left Column: The Form */
         .left-panel {
-            flex: 1; /* Takes up 50% of the space */
+            flex: 1; 
             background-color: rgba(26, 0, 0, 0.8); 
             border: 2px solid #cc0000; 
             padding: 40px;
@@ -44,22 +41,19 @@
             box-shadow: 0 0 20px #cc0000; 
         }
 
-        /* Right Column: The Checkout */
         .right-panel {
-            flex: 1; /* Takes up the other 50% of the space */
+            flex: 1; 
         }
 
-        /* The Checkout Container styling */
         #fsc-embedded-checkout-container { 
             width: 100%; 
-            min-height: 600px; /* Ensures the right side doesn't collapse before loading */
+            min-height: 600px; 
             background-color: #ffffff; 
             border-radius: 8px; 
-            box-shadow: 0 0 20px rgba(204, 0, 0, 0.5); /* Subtle red glow around the white checkout */
+            box-shadow: 0 0 20px rgba(204, 0, 0, 0.5); 
             overflow: hidden;
         }
 
-        /* Text and Form Styling */
         h2 { 
             color: #cc0000; 
             text-transform: uppercase; 
@@ -95,7 +89,6 @@
         button { width: 100%; padding: 15px; margin-top: 15px; background-color: #cc0000; color: #000; font-size: 16px; font-weight: bold; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; }
         button:hover { background-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
 
-        /* Responsive design so it stacks on top of each other on mobile phones */
         @media (max-width: 800px) {
             .main-wrapper { flex-direction: column; }
         }
@@ -136,7 +129,6 @@
             const lastName = document.getElementById('lastName').value;
             const email = document.getElementById('email').value;
             
-            // Change button text while loading
             const btn = document.getElementById('buyNowBtn');
             btn.innerText = "Summoning...";
             btn.disabled = true;
