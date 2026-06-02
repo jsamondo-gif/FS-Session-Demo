@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Side Checkout</title>
+
+    <script
+        id="fsc-api"
+        src="https://sbl.onfastspring.com/sbl/1.0.7/fastspring-builder.min.js"
+        type="text/javascript"
+        data-storefront="joestuneztest.test.onfastspring.com/embedded-darthvader2">
+    </script>
+
+    <style>
+        /* The Master Background - Dark radial gradient mimicking a Sith aura */
+        body {
+            background: radial-gradient(circle at center, #2a0000 0%, #000000 80%);
+            color: #ffcc00; 
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* The Flexbox Wrapper - Splits the screen into two columns */
+        .main-wrapper {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px; /* Keeps everything nicely contained */
+            align-items: flex-start;
+        }
+
+        /* Left Column: The Form */
+        .left-panel {
+            flex: 1; /* Takes up 50% of the space */
+            background-color: rgba(26, 0, 0, 0.8); 
+            border: 2px solid #cc0000; 
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px #cc0000; 
+        }
+
+        /* Right Column: The Checkout */
+        .right-panel {
+            flex: 1; /* Takes up the other 50% of the space */
+        }
+
+        /* The Checkout Container styling */
+        #fsc-embedded-checkout-container { 
+            width: 100%; 
+            min-height: 600px; /* Ensures the right side doesn't collapse before loading */
+            background-color: #ffffff; 
+            border-radius: 8px; 
+            box-shadow: 0 0 20px rgba(204, 0, 0, 0.5); /* Subtle red glow around the white checkout */
+            overflow: hidden;
+        }
+
+        /* Text and Form Styling */
+        h2 { 
+            color: #cc0000; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-top: 0;
+            margin-bottom: 10px; 
+        }
+        
+        .instructions {
+            color: #ffffff;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 12px; border: 1px solid #cc0000; background-color: #000; color: #ffcc00; border-radius: 4px; box-sizing: border-box; font-size: 14px;}
+        input:focus { outline: none; box-shadow: 0 0 8px #ffcc00; }
+        
+        .product-display {
+            background-color: #330000; 
+            border: 1px solid #cc0000;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .product-name { font-size: 18px; font-weight: bold; color: #ffcc00; }
+        .product-price { font-size: 16px; color: #ffffff; margin-top: 5px; }
+
+        button { width: 100%; padding: 15px; margin-top: 15px; background-color: #cc0000; color: #000; font-size: 16px; font-weight: bold; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; }
+        button:hover { background-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
+
+        /* Responsive design so it stacks on top of each other on mobile phones */
+        @media (max-width: 800px) {
+            .main-wrapper { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        
+        <div class="left-panel">
+            <h2>Claim Your Destiny</h2>
+            <p class="instructions">
+                Join the Dark Side. Enter your credentials below to generate a secure FastSpring session. 
+                Once initialized, your Sith Holocron will be summoned in the checkout portal.
+            </p>
+            
+            <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" placeholder="Darth" required></div>
+            <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" placeholder="Maul" required></div>
+            <div class="form-group"><label for="email">Email</label><input type="email" id="email" placeholder="maul@sith.com" required></div>
+            
+            <div class="product-display">
+                <div class="product-name">Selected Artifact: Sith Holocron</div>
+                <div class="product-price">Price: $99.99</div>
+            </div>
+
+            <button id="buyNowBtn">Initialize Session</button>
+        </div>
+
+        <div class="right-panel">
+            <div id="fsc-embedded-checkout-container"></div>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('buyNowBtn').addEventListener('click', async () => {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            
+            // Change button text while loading
+            const btn = document.getElementById('buyNowBtn');
+            btn.innerText = "Summoning...";
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/create-session', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ firstName, lastName, email })
+                });
+                
+                const sessionData = await response.json();
+                console.log("Session generated by backend:", sessionData);
+
+                if (sessionData && sessionData.id) {
+                    fastspring.builder.checkout(sessionData.id);
+                    btn.innerText = "Session Active";
+                } else {
+                    alert("The Dark Side clouded the session. Check your terminal!");
+                    btn.innerText = "Initialize Session";
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error("Failed to connect to the backend.", error);
+                btn.innerText = "Initialize Session";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
